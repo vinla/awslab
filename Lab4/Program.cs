@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Lab4
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var labRunner = new LabRunner();
+            await labRunner.Run();
+            Console.WriteLine("Finished");
         }
     }
 }

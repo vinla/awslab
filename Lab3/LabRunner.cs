@@ -27,8 +27,8 @@ namespace Lab3
             {
                 // await RemoveInfectionsTableIfExists(dbService);
                 // await CreateTable(dbService);
-
-                await QueryByCity(dbService, "Reno");
+                await UpdateItems(dbService);                                
+                //await QueryByCity(dbService, "Reno");
             }
         }
 
@@ -126,6 +126,29 @@ namespace Lab3
             }
         }
 
+        private async Task UpdateItems(IAmazonDynamoDB dbService)
+        {
+            var updateRequest = new UpdateItemRequest
+            {
+                TableName = Constants.TableName,
+                Key = "PatientId|102".ToDynamoAttributes(),
+                ExpressionAttributeNames = new Dictionary<string, string>
+                {
+                    { "#remarks", "Remarks"}
+                },
+                ExpressionAttributeValues = ":remarks|This is remarkable".ToDynamoAttributes(),                
+                UpdateExpression = "SET #remarks = :remarks"
+            };
+
+            await dbService.UpdateItemAsync(updateRequest);
+            await dbService.UpdateItemAsync(
+                Constants.TableName, "PatientId|103".ToDynamoAttributes(),
+                new Dictionary<string, AttributeValueUpdate>
+                {
+                    {"Remarks", new AttributeValueUpdate(new AttributeValue("This is not remarkable"), AttributeAction.PUT )}
+                });
+        }
+
         private static async Task QueryByCity(IAmazonDynamoDB dbService, string city)
         {
             QueryRequest request = new QueryRequest
@@ -146,7 +169,7 @@ namespace Lab3
                 Console.WriteLine($"{result["PatientId"].S} - {result["City"].S} - {result["Date"].S}");
             }
         }
-    }
+    }    
     
     public static class Constants
     {
@@ -158,6 +181,14 @@ namespace Lab3
         public static readonly string City = nameof(City);
 
         public static readonly string Date = nameof(Date);
+    }
+
+    public static class DynamoDBExtensions
+    {
+        public static Dictionary<string, AttributeValue> ToDynamoAttributes(this string data)
+        {
+            return data.Split(";").ToDictionary(d => d.Split("|")[0], d => new AttributeValue(d.Split("|")[1]) );
+        }
     }
 
     public static class S3Extensions
