@@ -1,1 +1,21 @@
 SAM local allows basic AWS services to be simulated (runs as a docker container)
+DevSecOps - security checkpoints throughout the SDLC
+
+
+AWS security
+All messages must be signed
+This is handled by the API - or use Signature Version 4
+
+Resources can be tagged
+this can be usefule for automation or security
+
+Can we use roles to allow resources outside of AWS to access resources within?
+- STS (Security token service)
+- What is the best practice for unattended authentication / authorization?
+
+EC2 Meta Data Service - available on every EC2 instance
+http://169.254.169.254/latest
+
+Cloudwatch for metrics? (Also remove need for alert manager)
+Can we make it work with graphana?
+Is it cost?
